@@ -1,5 +1,8 @@
-#include "../stdafx.h"
+ 
+#ifndef CLIENT_H
+#define CLIENT_H
 
+#include "../stdafx.h"
 #include <sys/socket.h>
 #include <thread>
 #include <netinet/in.h>
@@ -22,6 +25,8 @@ private:
     Client();
     ~Client();
     void Connected(std::promise<int> p);
-    void SendData(char* msg);
-    char* RecvData();
+    void SendData();
+    void RecvData();
 };
+
+#endif // CLIENT_H

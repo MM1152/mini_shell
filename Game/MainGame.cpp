@@ -1,9 +1,11 @@
 #include "MainGame.h"
+#include "GameScene.h"
 
 void MainGame::Play()
 {
-    titleScene = new TitleScene();
-
+    GameScene* gameScene = new GameScene();
+    titleScene = new TitleScene(gameScene);
+    
     while(1) {
         if(GetTerminalSize() == nullptr) {
             std::cout << "error to get terminal size" << std::endl;            
@@ -12,16 +14,21 @@ void MainGame::Play()
         width = ws.ws_col;
         height = ws.ws_row;
         
-        titleScene->ShowTitlePanel();
+        if(!titleScene->isConnection) {
+            titleScene->ShowTitlePanel();
 
-        std::cin.clear();
-        std::cin >> input;
+            std::cin.clear();
+            std::cin >> input;
 
-        if(titleScene->ChangeText(input) == -1) {
-            break;
+            if(titleScene->ChangeText(input) == -1) {
+                break;
+            }
+        }
+        else {
+           break;
         }
     }
-
+    gameScene->DrawMap();
     delete titleScene;
 }
 

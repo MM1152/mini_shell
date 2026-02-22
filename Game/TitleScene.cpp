@@ -1,9 +1,11 @@
 #include "TitleScene.h"
 #include <future>
 
-TitleScene::TitleScene()
+TitleScene::TitleScene(GameScene* gameScene)
 {
     curText = selectText;
+    this->gameScene = gameScene;
+    gameScene = new GameScene();
     textArraySize = 2;
 }
 
@@ -13,6 +15,10 @@ TitleScene::~TitleScene()
         delete server;
     if(client != nullptr) 
         delete client;
+    if(gameScene != nullptr)
+        delete gameScene;
+
+    isConnection = false;
 }
 
 int TitleScene::ChangeText(int input)
@@ -63,8 +69,9 @@ void TitleScene::CreateRoom()
     
     if(server->Open() == 1) {
         curText = &matchingText;
+        gameScene->InitServer(server);
+        isConnection = true;
     }
-    
 }
 
 void TitleScene::JoinRoom()
@@ -80,7 +87,9 @@ void TitleScene::JoinRoom()
     
     if(result.get() == 1) {
         curText = &matchingText;
+        gameScene->InitClient(client);
         ShowTitlePanel();
+        isConnection = true;
     }  
     else {
         curText = createorjoinText;

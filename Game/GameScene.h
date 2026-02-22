@@ -1,8 +1,13 @@
+ 
+#ifndef GAMESCENE_H
+#define GAMESCENE_H
+
 #include "../stdafx.h"
 #include <vector>
 #include "Server.h"
 #include "Client.h"
 #include "../Utils.h"
+
 class GameScene {
 private:
     Client* client;
@@ -18,3 +23,5 @@ public:
 
     void DrawMap();
 };
+
+#endif // GAMESCENE_H

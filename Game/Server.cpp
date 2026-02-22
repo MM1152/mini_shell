@@ -57,6 +57,29 @@ int Server::Open()
     return 1;
 }
 
+void Server::Recv()
+{
+    while(1) {
+        if(recv(client_fd, buffer, sizeof(buffer), 0) <= 0) {
+            break;
+        } 
+        std::cout << "Get Message : " << buffer << std::endl;
+    }
+}
+
+void Server::Send()
+{
+    char msg[1024];
+    while(1) {
+        std::cin >> msg;
+
+        if(send(client_fd, msg, sizeof(msg), 0) <= 0) {
+            break;
+        }
+    }
+}
+
+
 Server::~Server()
 {
     close(client_fd);

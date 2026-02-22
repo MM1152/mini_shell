@@ -1,13 +1,19 @@
+
+#ifndef TITLESCENE_H
+#define TITLESCENE_H
+
 #include "../stdafx.h"
 #include "../Utils.h"
 #include "Server.h"
 #include "Client.h"
+#include "GameScene.h"
 
 class TitleScene{
 private:
     Server* server;
     Client* client;
-
+    GameScene* gameScene;
+    
     const std::string titleText = "오목 게임";
     const std::string selectText[2] = {
         "1. 게임 시작",
@@ -26,10 +32,14 @@ private:
     int textArraySize;
 
 public:
-    TitleScene();
+    bool isConnection;
+
+    TitleScene(GameScene* gameScene);
     ~TitleScene();
     int ChangeText(int input);
     void ShowTitlePanel();
     void CreateRoom();
     void JoinRoom();
 };
+
+#endif // TITLESCENE_H

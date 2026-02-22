@@ -1,5 +1,7 @@
-#include "../stdafx.h"
+#ifndef SERVER_H
+#define SERVER_H
 
+#include "../stdafx.h"
 #include <sys/socket.h>
 #include <thread>
 #include <netinet/in.h>
@@ -12,6 +14,8 @@ private:
     sockaddr_in server {};
     sockaddr_in client {};    
 
+    char buffer[1024];
+
     int server_fd;
     int client_fd;
 
@@ -22,5 +26,9 @@ private:
     int Check();
 public:
     int Open();
+    void Recv();
+    void Send();
     ~Server();
 };
+
+#endif // SERVER_H

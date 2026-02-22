@@ -51,15 +51,21 @@ void Client::Connected(std::promise<int> p)
     }
 }
 
-void Client::SendData(char* msg)
+void Client::SendData()
 {
-    send(sock, msg, sizeof(msg), 0);
+    char msg[1024];
+    while(1) {
+        std::cin >> msg;
+        if(send(sock, msg, sizeof(msg), 0) <= 0) {
+            break;
+        }
+    }
 }
 
-char* Client::RecvData()
+void Client::RecvData()
 {
     while(1) {
-        if(recv(sock, buffer, sizeof(buffer), 0) < 0) {
+        if(recv(sock, buffer, sizeof(buffer), 0) <= 0) {
             break;
         } 
         std::cout << "Server Send : " << buffer << std::endl;       
