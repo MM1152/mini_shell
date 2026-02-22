@@ -7,13 +7,21 @@
 #include <iostream>
 #include <unistd.h>
 #include <sys/socket.h>
+#include <future>
 
 class Client {
 private:
+    char buffer[1024];
     int sock;
+    bool connection;
     sockaddr_in server { };  
-public:
+
+    void ReConnected();
+    
+    public:
     Client();
     ~Client();
-    int Connected();
+    void Connected(std::promise<int> p);
+    void SendData(char* msg);
+    char* RecvData();
 };

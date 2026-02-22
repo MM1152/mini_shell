@@ -7,7 +7,7 @@
 #include <iostream>
 #include <unistd.h>
 
-class Server {
+class Server{
 private:
     sockaddr_in server {};
     sockaddr_in client {};    
@@ -22,6 +22,5 @@ private:
     int Check();
 public:
     int Open();
-
     ~Server();
 };

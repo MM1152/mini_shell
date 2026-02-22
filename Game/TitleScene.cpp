@@ -1,9 +1,5 @@
 #include "TitleScene.h"
-
-void TitleScene::ClearScreen()
-{
-    std::cout << "\033[2J\033[H" << std::flush;
-}
+#include <future>
 
 TitleScene::TitleScene()
 {
@@ -53,7 +49,7 @@ int TitleScene::ChangeText(int input)
 
 void TitleScene::ShowTitlePanel()
 {
-    ClearScreen();
+    Utils::ClearScreen();
     std::cout << titleText << std::endl;
     
     for(int i = 0; i < textArraySize; i++) {
@@ -64,6 +60,7 @@ void TitleScene::ShowTitlePanel()
 void TitleScene::CreateRoom()
 {
     server = new Server();
+    
     if(server->Open() == 1) {
         curText = &matchingText;
     }
@@ -73,7 +70,20 @@ void TitleScene::CreateRoom()
 void TitleScene::JoinRoom()
 {
     client = new Client();
-    if(client->Connected() == 1) {
+    std::promise<int> p;
+    std::future<int> result = p.get_future();
+    std::thread t(&Client::Connected, client, std::move(p));
+
+    curText = &duringMatcing;
+    ShowTitlePanel();
+    t.join();
+    
+    if(result.get() == 1) {
         curText = &matchingText;
+        ShowTitlePanel();
+    }  
+    else {
+        curText = createorjoinText;
+        ShowTitlePanel();
     }
 }

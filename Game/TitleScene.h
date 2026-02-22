@@ -1,4 +1,5 @@
 #include "../stdafx.h"
+#include "../Utils.h"
 #include "Server.h"
 #include "Client.h"
 
@@ -19,11 +20,11 @@ private:
     const std::string waitforUserText = "유저 접속 기다리는 중";
     const std::string waitforJoinRoom = "방 찾는 중";
     const std::string matchingText = "매칭 되었습니다.";
+    const std::string duringMatcing = "매칭 중입니다.";
     
     const std::string* curText;
     int textArraySize;
 
-    void ClearScreen();
 public:
     TitleScene();
     ~TitleScene();
