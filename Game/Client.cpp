@@ -1,6 +1,7 @@
 #include "Client.h"
 #include "../Define.h"
 #include <future>
+
 void Client::ReConnected()
 {
     if(connect(sock, (sockaddr*) socketAddress, sizeof(sockaddr_in)) < 0){
@@ -10,13 +11,13 @@ void Client::ReConnected()
     connection = true;
 }
 
-Client::Client()
+Client::Client(int port)
 {
     socketAddress = new sockaddr_in();
     sock = socket(AF_INET, SOCK_STREAM, 0);
 
     socketAddress->sin_family = AF_INET;
-    socketAddress->sin_port = htons(7777);
+    socketAddress->sin_port = htons(port);
     socketAddress->sin_addr.s_addr = inet_addr("127.0.0.1");
 }
 

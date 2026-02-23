@@ -19,7 +19,7 @@ private:
     void ReConnected();
     bool connection;
 public:
-    Client();
+    Client(int port);
     ~Client();
     void Connected(std::promise<int> p);
 };

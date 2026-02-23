@@ -1,0 +1,50 @@
+[1mdiff --git a/Game/MainGame.cpp b/Game/MainGame.cpp[m
+[1mindex 32a3bf6..7715241 100644[m
+[1m--- a/Game/MainGame.cpp[m
+[1m+++ b/Game/MainGame.cpp[m
+[36m@@ -1,21 +1,27 @@[m
+[32m+[m[32m#include <atomic>[m
+[32m+[m[32m#include <thread>[m
+[32m+[m
+ #include "MainGame.h"[m
+ #include "GameScene.h"[m
+ #include "TitleScene.h"[m
+[32m+[m[32m#include <csignal>[m
+[32m+[m[32m#include <atomic>[m
+[32m+[m[32m#include <thread>[m
+[32m+[m
+ [m
+ void MainGame::Play()[m
+ {[m
+[31m-    GameScene* gameScene = new GameScene();[m
+[32m+[m[32m    gameScene = new GameScene();[m
+     titleScene = new TitleScene(gameScene);[m
+[31m-    [m
+[32m+[m
+     while(1) {[m
+         struct winsize ws = Utils::GetTerminalSize();[m
+         width = ws.ws_col;[m
+         height = ws.ws_row;[m
+[31m-        [m
+[32m+[m
+         if(!titleScene->isConnection) {[m
+             titleScene->ShowTitlePanel();[m
+ [m
+[31m-            std::cin.clear();[m
+             std::cin >> input;[m
+ [m
+             if(titleScene->ChangeText(input) == -1) {[m
+[36m@@ -23,9 +29,11 @@[m [mvoid MainGame::Play()[m
+             }[m
+         }[m
+         else {[m
+[31m-           break;[m
+[32m+[m[32m            gameScene->DrawMap();[m
+         }[m
+     }[m
+[31m-    gameScene->DrawMap();[m
+[32m+[m[32m    delete gameScene;[m
+     delete titleScene;[m
+[32m+[m[32m    std::cout << "종료" << std::endl;[m
+[32m+[m[32m    exit(1);[m
+ }[m

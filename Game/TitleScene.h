@@ -34,10 +34,11 @@ private:
 
 public:
     bool isConnection;
+    int port;
 
     TitleScene(GameScene* gameScene);
     ~TitleScene();
-    int ChangeText(int input);
+    int ChangeText(std::string input);
     void ShowTitlePanel();
     void CreateRoom();
     void JoinRoom();

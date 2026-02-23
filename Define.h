@@ -8,4 +8,5 @@ public:
     const static int MAX_ARGS = 64;
 
     const static int RECONNECT_COUNT = 5;
+    const static int PORT = 7777;
 };

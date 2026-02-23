@@ -1,6 +1,7 @@
 #include "TitleScene.h"
+#include "../Utils.h"
 #include <future>
-
+#include <string>
 TitleScene::TitleScene(GameScene* gameScene)
 {
     curText = selectText;
@@ -21,27 +22,35 @@ TitleScene::~TitleScene()
     isConnection = false;
 }
 
-int TitleScene::ChangeText(int input)
+int TitleScene::ChangeText(std::string input)
 {
     if(curText == selectText) {
-        if(input == 50) {
+        if((int)input[0] == 50) {
             return -1;
         }
-        if(input == 49) {
+        if((int)input[0] == 49) {
             curText = createorjoinText;
             textArraySize = 2;
             return 1;
         }
     }
+    else if(curText == createorjoinText) {
+        std::vector<std::string> splitdatas = Utils::SplitString(input, ' ');
+        if(splitdatas.size() == 1) {
+            port = 7777;
+        }
+        else {
+            port = std::stoi(splitdatas[1]);
+        }
 
-    if(curText == createorjoinText) {
-        if(input == 49) {
+        if((int)input[0] == 49) {
+            
             curText = &waitforJoinRoom;
             textArraySize = 1;
             JoinRoom();
             return 1;
         }
-        if(input == 50) {
+        if((int)input[0] == 50) {
             curText = &waitforUserText;
             textArraySize = 1;
             CreateRoom();
@@ -65,7 +74,7 @@ void TitleScene::ShowTitlePanel()
 
 void TitleScene::CreateRoom()
 {
-    server = new Server();
+    server = new Server(port);
     std::promise<int> p;
     std::future result = p.get_future();
     std::thread t(&Server::Open, server, &p);
@@ -87,7 +96,7 @@ void TitleScene::CreateRoom()
 
 void TitleScene::JoinRoom()
 {
-    client = new Client();
+    client = new Client(port);
     std::promise<int> p;
     std::future<int> result = p.get_future();
     std::thread t(&Client::Connected, client, std::move(p));

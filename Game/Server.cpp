@@ -1,19 +1,24 @@
 #include "Server.h"
-
+#include "../Define.h"
 void Server::CreateSocket()
 {
     socketAddress = new sockaddr_in();
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
     
     socketAddress->sin_family = AF_INET;
-    socketAddress->sin_port = htons(7777);
+    socketAddress->sin_port = htons(port);
     socketAddress->sin_addr.s_addr = INADDR_ANY;
 }
 
 void Server::BindAdress()
 {
     if(bind(server_fd, (sockaddr*)socketAddress, sizeof(sockaddr_in)) < 0) {
-        throw "fail to bind";
+        if(errno == EADDRINUSE) {
+            throw "Port aleady in user";
+        }
+        else {
+            throw "fail to bind";
+        }
     }
 }
 
@@ -60,6 +65,11 @@ void Server::Open(std::promise<int>* p)
         std::cout << e << std::endl;
     }
 
+}
+
+Server::Server(int port)
+{
+    this->port = port;
 }
 
 Server::~Server()

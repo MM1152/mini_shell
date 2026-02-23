@@ -19,7 +19,7 @@ class Socket {
     protected:
         std::atomic<bool> stopFlag { false };
         char buffer[BUFFER_SIZE];
-        char msg[MSG_SIZE];
+        std::string msg;
 
         int sock;
         sockaddr_in* socketAddress;
@@ -27,7 +27,7 @@ class Socket {
         Socket() = default;
         virtual ~Socket();
 
-        void Send(std::vector<std::string>* messageQueue);
-        void Receive(std::vector<std::string>* messageQueue);
+        void Send(std::vector<std::string>* messageQueue, bool* flag);
+        void Receive(std::vector<std::string>* messageQueue, bool* flag);
 };
 #endif // SOCKET_H

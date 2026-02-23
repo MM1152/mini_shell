@@ -10,7 +10,8 @@ private:
     sockaddr_in client {};    
 
     int server_fd;
-
+    int port;
+    
     void CreateSocket();
     void BindAdress();
     void ConnectClient();
@@ -18,8 +19,8 @@ private:
     int Check();
 public:
     void Open(std::promise<int>* p);
-    Server() = default;
-    ~Server();
+    Server(int port);
+    ~Server() override;
 };
 
 #endif // SERVER_H
