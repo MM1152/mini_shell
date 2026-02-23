@@ -27,6 +27,7 @@ private:
     const std::string waitforJoinRoom = "방 찾는 중";
     const std::string matchingText = "매칭 되었습니다.";
     const std::string duringMatcing = "매칭 중입니다.";
+    const std::string failToCreateRoom = "방 만들기 실패";
     
     const std::string* curText;
     int textArraySize;

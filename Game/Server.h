@@ -2,22 +2,14 @@
 #define SERVER_H
 
 #include "../stdafx.h"
-#include <sys/socket.h>
-#include <thread>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <iostream>
-#include <unistd.h>
+#include "Socket.h"
 
-class Server{
+
+class Server : public Socket {
 private:
-    sockaddr_in server {};
     sockaddr_in client {};    
 
-    char buffer[1024];
-
     int server_fd;
-    int client_fd;
 
     void CreateSocket();
     void BindAdress();
@@ -25,9 +17,8 @@ private:
     void Accept();
     int Check();
 public:
-    int Open();
-    void Recv();
-    void Send();
+    void Open(std::promise<int>* p);
+    Server() = default;
     ~Server();
 };
 

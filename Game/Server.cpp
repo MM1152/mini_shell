@@ -2,16 +2,17 @@
 
 void Server::CreateSocket()
 {
+    socketAddress = new sockaddr_in();
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
     
-    server.sin_family = AF_INET;
-    server.sin_port = htons(7777);
-    server.sin_addr.s_addr = INADDR_ANY;
+    socketAddress->sin_family = AF_INET;
+    socketAddress->sin_port = htons(7777);
+    socketAddress->sin_addr.s_addr = INADDR_ANY;
 }
 
 void Server::BindAdress()
 {
-    if(bind(server_fd, (sockaddr*)&server, sizeof(server)) < 0) {
+    if(bind(server_fd, (sockaddr*)socketAddress, sizeof(sockaddr_in)) < 0) {
         throw "fail to bind";
     }
 }
@@ -26,8 +27,8 @@ void Server::ConnectClient()
 void Server::Accept()
 {
     socklen_t client_len = sizeof(client);
-    client_fd = accept(server_fd, (sockaddr*)&client, &client_len);
-    if(client_fd < 0) {
+    sock = accept(server_fd, (sockaddr*)&client, &client_len);
+    if(sock < 0) {
         throw "fail to accept";
     }
 }
@@ -35,53 +36,36 @@ void Server::Accept()
 int Server::Check()
 {
     std::string msg = "checkConnect";
-    int result = send(client_fd, msg.c_str(), sizeof(msg), 0);
+    int result = send(sock, msg.c_str(), sizeof(msg), 0);
     return result;
 }
 
-int Server::Open()
+void Server::Open(std::promise<int>* p)
 {
     try {
-        CreateSocket();
-        BindAdress();
-        ConnectClient();
-        Accept();
-        if(Check() <= 0){
-            Open();
-        }
+        do{
+            CreateSocket();
+            BindAdress();
+            ConnectClient();
+            Accept();
+            if(Check() > 0) {
+                break;
+            }
+        }while(1);
+
+        p->set_value(1);
     }
     catch (const char* e) {
+        p->set_value(-1);
         std::cout << e << std::endl;
     }
 
-    return 1;
 }
-
-void Server::Recv()
-{
-    while(1) {
-        if(recv(client_fd, buffer, sizeof(buffer), 0) <= 0) {
-            break;
-        } 
-        std::cout << "Get Message : " << buffer << std::endl;
-    }
-}
-
-void Server::Send()
-{
-    char msg[1024];
-    while(1) {
-        std::cin >> msg;
-
-        if(send(client_fd, msg, sizeof(msg), 0) <= 0) {
-            break;
-        }
-    }
-}
-
 
 Server::~Server()
 {
-    close(client_fd);
+    int opt = 1;
+    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     close(server_fd);
+    close(sock);
 }

@@ -1,15 +1,33 @@
 #include "Socket.h"
-#include <thread>
-#include <iostream>
-#include <unistd.h>
+#include <string>
 
-bool Socket::Send(const std::string &data)
+Socket::~Socket()
 {
-    return false;
+    delete socketAddress;
 }
 
-std::string Socket::Receive()
+void Socket::Send(std::vector<std::string>* messageQueue)
 {
+    while(!stopFlag) {
+        std::cin >> msg;
+        if(send(sock, msg, MSG_SIZE, 0) <= 0) {
+            stopFlag = true;
+            break;
+        }
+        std::string str(msg);
+        messageQueue->push_back("[내가 보낸 메세지] : " + str);
+    }
+}
 
-    return std::string();
+void Socket::Receive(std::vector<std::string>* messageQueue)  
+{
+    while(!stopFlag) {
+        if(recv(sock, buffer, BUFFER_SIZE, 0) <= 0) {
+            stopFlag = true;
+            break;
+        }
+        std::string str(buffer);
+        messageQueue->push_back("[상대방] : " + str);
+    }
+    std::cout << "통신 종료됌" << std::endl;
 }

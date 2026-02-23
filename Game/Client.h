@@ -2,6 +2,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
+#include "Socket.h"
 #include "../stdafx.h"
 #include <sys/socket.h>
 #include <thread>
@@ -12,21 +13,15 @@
 #include <sys/socket.h>
 #include <future>
 
-class Client {
+class Client : public Socket{
 private:
-    char buffer[1024];
-    int sock;
-    bool connection;
     sockaddr_in server { };  
-
     void ReConnected();
-    
-    public:
+    bool connection;
+public:
     Client();
     ~Client();
     void Connected(std::promise<int> p);
-    void SendData();
-    void RecvData();
 };
 
 #endif // CLIENT_H

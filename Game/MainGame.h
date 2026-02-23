@@ -1,17 +1,20 @@
+// ...existing code...
+#ifndef MAINGAME_H
+#define MAINGAME_H
+
 #include "../stdafx.h"
-#include "TitleScene.h"
 #include "../Define.h"
+
+class TitleScene;
 
 class MainGame {
 private:
-    TitleScene* titleScene;    
-
-    struct winsize ws;
+    TitleScene* titleScene;
     int width = 0;
     int height = 0;
     char input;
-
 public:
     void Play();
-    struct winsize* GetTerminalSize();
 };
+
+#endif // MAINGAME_H

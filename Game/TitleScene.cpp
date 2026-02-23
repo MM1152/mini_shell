@@ -66,11 +66,22 @@ void TitleScene::ShowTitlePanel()
 void TitleScene::CreateRoom()
 {
     server = new Server();
-    
-    if(server->Open() == 1) {
+    std::promise<int> p;
+    std::future result = p.get_future();
+    std::thread t(&Server::Open, server, &p);
+
+    curText = &duringMatcing;
+    ShowTitlePanel();
+
+    t.join();
+
+    if(result.get() == 1) {
         curText = &matchingText;
         gameScene->InitServer(server);
         isConnection = true;
+    }
+    else {
+        curText = &failToCreateRoom;
     }
 }
 
