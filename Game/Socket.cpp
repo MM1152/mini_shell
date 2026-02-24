@@ -7,7 +7,7 @@ Socket::~Socket()
     delete socketAddress;
 }
 
-void Socket::Send(std::vector<std::string>* messageQueue, bool* flag)
+void Socket::Send(std::vector<Packet>* messageQueue, bool* flag)
 {
     while(!stopFlag) {
         fd_set set;
@@ -20,23 +20,35 @@ void Socket::Send(std::vector<std::string>* messageQueue, bool* flag)
 
         int rv = select(STDIN_FILENO + 1, &set, NULL, NULL, &timeout);
         if (rv > 0) {
+            Packet pack;
+            
             char ch;
-
+            int pointer = 0;
             while((ch = getchar()) != '\n' && ch != EOF){
-                msg += ch;
+                pack.buffer[pointer++] = ch;
             }
+            pack.buffer[pointer] = '\0';
 
             if(ch == '\n') {
-                if(strcmp(msg.c_str(), "exit") == 0) {
+                std::vector<std::string> split = Utils::SplitString(pack.buffer, ' ');
+                if(split.size() > 1 && ( split[0][0] >= 'A' && split[0][0] <= 'O') && ( std::stoi(split[1]) >= 1 && std::stoi(split[1]) <= 15)) {
+                    pack.packetId = 1001; // 게임에 사용되는 데이터 패킷 아이디
+                }
+                else {
+                    pack.packetId = 1002; // 메세지용 패킷  아이디
+                }
+
+                if(strcmp(pack.buffer, "exit") == 0) {
                     stopFlag = true;
                     break;
                 }
-                if(send(sock, msg.c_str(), MSG_SIZE, 0) <= 0) {
+
+                if(send(sock, &pack, MSG_SIZE, 0) <= 0) {
                     stopFlag = true;
                     break;
                 }
-                messageQueue->push_back("[내가 보낸 메세지] : " + msg);
-                msg.clear();
+
+                messageQueue->push_back(pack);
             }
         }
         // std::string str(msg);
@@ -44,19 +56,21 @@ void Socket::Send(std::vector<std::string>* messageQueue, bool* flag)
     *flag = stopFlag;
 }
 
-void Socket::Receive(std::vector<std::string>* messageQueue, bool* flag)  
+void Socket::Receive(std::vector<Packet>* messageQueue, bool* flag)  
 {
+    Packet pack;
     while(!stopFlag) {
-        if(recv(sock, buffer, BUFFER_SIZE, 0) <= 0) {
+        if(recv(sock, &pack, BUFFER_SIZE + 2, 0) <= 0) {
             stopFlag = true;
             break;
         }
-        std::string str(buffer);
-        if(strcmp(buffer, "exit") == 0) {
+
+        std::string str(pack.buffer);
+        if(strcmp(pack.buffer, "exit") == 0) {
             stopFlag = true;
             break;
         }
-        messageQueue->push_back("[상대방] : " + str);
+        messageQueue->push_back(pack);
     }
     std::cout << "통신 종료됌" << std::endl;
     *flag = stopFlag;

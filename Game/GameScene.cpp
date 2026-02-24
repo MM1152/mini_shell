@@ -38,13 +38,14 @@ void GameScene::DrawMap()
                 std::cout << messageQueue[i] << std::endl;
             }
 
-            for(int i = 0; i < space - messageQueue.size(); i++) {    
+            for(int i = 0; i < space - messageQueue.size() - 1; i++) {    
                 std::cout << std::endl;
             }
-
+            std::cout << ">>>>>>>>> 착수 방법 예시 ) A 10 <<<<<<<<<" << std::endl;
             if(messageQueue.size() >= space - 1) {
                 messageQueue.erase(messageQueue.begin());
             }
+
         }
 
         if(recvFlag && sendFlag) {

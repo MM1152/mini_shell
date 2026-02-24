@@ -15,11 +15,14 @@
 #define BUFFER_SIZE 1024
 #define MSG_SIZE 64
 
+struct Packet {
+    short packetId; //
+    char buffer[BUFFER_SIZE];
+};
+
 class Socket {
     protected:
         std::atomic<bool> stopFlag { false };
-        char buffer[BUFFER_SIZE];
-        std::string msg;
 
         int sock;
         sockaddr_in* socketAddress;
@@ -27,7 +30,7 @@ class Socket {
         Socket() = default;
         virtual ~Socket();
 
-        void Send(std::vector<std::string>* messageQueue, bool* flag);
-        void Receive(std::vector<std::string>* messageQueue, bool* flag);
+        void Send(std::vector<Packet>* messageQueue, bool* flag);
+        void Receive(std::vector<Packet>* messageQueue, bool* flag);
 };
 #endif // SOCKET_H
