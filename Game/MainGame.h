@@ -20,7 +20,6 @@ public:
     ~MainGame();
     void Play();
     void Release();
-    void InputThread(std::promise<char>* p, std::promise<bool>* p1);
 };
 
 #endif // MAINGAME_H

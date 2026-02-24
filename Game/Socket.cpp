@@ -7,7 +7,7 @@ Socket::~Socket()
     delete socketAddress;
 }
 
-void Socket::Send(std::vector<Packet>* messageQueue, bool* flag)
+void Socket::Send(std::queue<Packet>* messageQueue, bool* flag)
 {
     while(!stopFlag) {
         fd_set set;
@@ -33,6 +33,9 @@ void Socket::Send(std::vector<Packet>* messageQueue, bool* flag)
                 std::vector<std::string> split = Utils::SplitString(pack.buffer, ' ');
                 if(split.size() > 1 && ( split[0][0] >= 'A' && split[0][0] <= 'O') && ( std::stoi(split[1]) >= 1 && std::stoi(split[1]) <= 15)) {
                     pack.packetId = 1001; // 게임에 사용되는 데이터 패킷 아이디
+                    // memset(pack.buffer, '\0', sizeof(pack.buffer));
+                    // pack.buffer[0] = split[0][0];
+                    // pack.buffer[1] = split[1][0];
                 }
                 else {
                     pack.packetId = 1002; // 메세지용 패킷  아이디
@@ -48,7 +51,7 @@ void Socket::Send(std::vector<Packet>* messageQueue, bool* flag)
                     break;
                 }
 
-                messageQueue->push_back(pack);
+                messageQueue->push(pack);
             }
         }
         // std::string str(msg);
@@ -56,7 +59,7 @@ void Socket::Send(std::vector<Packet>* messageQueue, bool* flag)
     *flag = stopFlag;
 }
 
-void Socket::Receive(std::vector<Packet>* messageQueue, bool* flag)  
+void Socket::Receive(std::queue<Packet>* messageQueue, bool* flag)  
 {
     Packet pack;
     while(!stopFlag) {
@@ -70,7 +73,9 @@ void Socket::Receive(std::vector<Packet>* messageQueue, bool* flag)
             stopFlag = true;
             break;
         }
-        messageQueue->push_back(pack);
+
+        pack.sender = 1;
+        messageQueue->push(pack);
     }
     std::cout << "통신 종료됌" << std::endl;
     *flag = stopFlag;

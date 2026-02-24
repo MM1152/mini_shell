@@ -11,26 +11,28 @@
 #include <unistd.h>
 #include <future>
 #include <vector>
+#include <queue>
 
 #define BUFFER_SIZE 1024
 #define MSG_SIZE 64
 
 struct Packet {
-    short packetId; //
+    short packetId;
+    short sender = 0;
     char buffer[BUFFER_SIZE];
 };
 
 class Socket {
     protected:
         std::atomic<bool> stopFlag { false };
-
+    
         int sock;
         sockaddr_in* socketAddress;
     public:
         Socket() = default;
         virtual ~Socket();
 
-        void Send(std::vector<Packet>* messageQueue, bool* flag);
-        void Receive(std::vector<Packet>* messageQueue, bool* flag);
+        void Send(std::queue<Packet>* messageQueue, bool* flag);
+        void Receive(std::queue<Packet>* messageQueue, bool* flag);
 };
 #endif // SOCKET_H

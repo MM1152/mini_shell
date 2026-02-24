@@ -5,6 +5,7 @@
 #include "../stdafx.h"
 #include "../Utils.h"
 #include <thread>
+#include <queue>
 #include "Server.h"
 #include "Client.h"
 #include "Socket.h"
@@ -51,7 +52,7 @@ private:
         "15| +  +  +  +  +  +  +  +  +  +  +  +  +  +  + |",
         "  +---------------------------------------------+"
         };
-    std::vector<std::string> messageQueue;
+    std::queue<Packet> messageQueue;
     Client* client;
     Server* server;
 
@@ -68,6 +69,7 @@ public:
 
     void DrawMap();
     void DrawBoard();
+    void HandleMessageQueue(std::vector<std::string>& chat);
 };
 
 #endif // GAMESCENE_H
