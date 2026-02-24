@@ -23,10 +23,8 @@ void GameScene::InitServer(Server *server)
 
 void GameScene::DrawMap()
 {
-    int prevQueueSize = messageQueue.size();
-
+    int prevQueueSize = messageQueue.size() - 1;
     while(1) {
-
         if(messageQueue.size() != prevQueueSize) {
             prevQueueSize = messageQueue.size();
             struct winsize ws = Utils::GetTerminalSize();

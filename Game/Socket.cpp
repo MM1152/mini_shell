@@ -30,7 +30,7 @@ void Socket::Send(std::vector<std::string>* messageQueue, bool* flag)
                     stopFlag = true;
                     break;
                 }
-
+                
                 messageQueue->push_back("[내가 보낸 메세지] : " + msg);
                 msg.clear();
             }
@@ -38,8 +38,6 @@ void Socket::Send(std::vector<std::string>* messageQueue, bool* flag)
                 msg += ch;
             }
         }
-
-
         // std::string str(msg);
     }
     *flag = stopFlag;

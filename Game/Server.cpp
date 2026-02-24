@@ -53,7 +53,7 @@ void Server::Open(std::promise<int>* p)
             BindAdress();
             ConnectClient();
             Accept();
-            if(Check() > 0) {
+            if(Check() >= 0) {
                 break;
             }
         }while(1);

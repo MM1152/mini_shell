@@ -44,15 +44,10 @@ int TitleScene::ChangeText(std::string input)
         }
 
         if((int)input[0] == 49) {
-            
-            curText = &waitforJoinRoom;
-            textArraySize = 1;
             JoinRoom();
             return 1;
         }
         if((int)input[0] == 50) {
-            curText = &waitforUserText;
-            textArraySize = 1;
             CreateRoom();
             return 1;
         }
@@ -79,7 +74,8 @@ void TitleScene::CreateRoom()
     std::future result = p.get_future();
     std::thread t(&Server::Open, server, &p);
 
-    curText = &duringMatcing;
+    curText = &waitforUserText;
+    textArraySize = 1;
     ShowTitlePanel();
 
     t.join();
@@ -87,10 +83,13 @@ void TitleScene::CreateRoom()
     if(result.get() == 1) {
         curText = &matchingText;
         gameScene->InitServer(server);
+        ShowTitlePanel();
+        std::cout << "Server Create Room Fin" << std::endl;
         isConnection = true;
     }
     else {
         curText = &failToCreateRoom;
+        ShowTitlePanel();
     }
 }
 

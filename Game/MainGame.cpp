@@ -36,6 +36,7 @@ void MainGame::Play()
             }
         }
         else {
+            std::cout << "Draw map" << std::endl;
             gameScene->DrawMap();
             break;
         }
