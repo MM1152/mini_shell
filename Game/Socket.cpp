@@ -20,7 +20,12 @@ void Socket::Send(std::vector<std::string>* messageQueue, bool* flag)
 
         int rv = select(STDIN_FILENO + 1, &set, NULL, NULL, &timeout);
         if (rv > 0) {
-            char ch = getchar();
+            char ch;
+
+            while((ch = getchar()) != '\n' && ch != EOF){
+                msg += ch;
+            }
+
             if(ch == '\n') {
                 if(strcmp(msg.c_str(), "exit") == 0) {
                     stopFlag = true;
@@ -30,12 +35,8 @@ void Socket::Send(std::vector<std::string>* messageQueue, bool* flag)
                     stopFlag = true;
                     break;
                 }
-                
                 messageQueue->push_back("[내가 보낸 메세지] : " + msg);
                 msg.clear();
-            }
-            else {
-                msg += ch;
             }
         }
         // std::string str(msg);
