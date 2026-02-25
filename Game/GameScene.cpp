@@ -84,7 +84,6 @@ void GameScene::DrawMap()
             client->stopFlag = true;
         }
         if(recvFlag && sendFlag) {
-            std::cout << "GameScene Loop Finish" << std::endl;
             break;
         }
     }

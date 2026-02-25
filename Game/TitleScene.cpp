@@ -82,9 +82,9 @@ void TitleScene::CreateRoom()
 
     if(result.get() == 1) {
         curText = &matchingText;
+        textArraySize = 1;
         gameScene->InitServer(server);
         ShowTitlePanel();
-        std::cout << "Server Create Room Fin" << std::endl;
         isConnection = true;
     }
     else {
@@ -101,17 +101,21 @@ void TitleScene::JoinRoom()
     std::thread t(&Client::Connected, client, std::move(p));
 
     curText = &duringMatcing;
+    textArraySize = 1;F
     ShowTitlePanel();
     t.join();
     
     if(result.get() == 1) {
         curText = &matchingText;
+        textArraySize = 1;
+        
         gameScene->InitClient(client);
         ShowTitlePanel();
         isConnection = true;
     }  
     else {
         curText = createorjoinText;
+        textArraySize = 2;
         ShowTitlePanel();
     }
 }
