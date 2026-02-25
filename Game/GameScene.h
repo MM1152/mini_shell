@@ -58,6 +58,7 @@ private:
         L"  +---------------------------------------------+"
         };
     std::queue<Packet> messageQueue;
+    std::vector<std::string> chat;
     Client* client;
     Server* server;
 
@@ -66,7 +67,8 @@ private:
 
     bool sendFlag;
     bool recvFlag;
-    
+    bool turnFlag;
+
     void SettingClient();
 public:
     void InitClient(Client* client);
@@ -74,8 +76,8 @@ public:
 
     void DrawMap();
     void DrawBoard();
-    void HandleMessageQueue(std::vector<std::string>& chat);
-    void PlaceStone(int x, int y, int sender);
+    void HandleMessageQueue();
+    int PlaceStone(int x, int y, int sender);
 };
 
 #endif // GAMESCENE_H

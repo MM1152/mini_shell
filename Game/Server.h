@@ -19,6 +19,7 @@ private:
     int Check();
 public:
     void Open(std::promise<int>* p);
+    void Send(std::queue<Packet>* messageQueue, bool* flag, std::vector<std::vector<int>>& board) override;
     Server(int port);
     ~Server() override;
 };

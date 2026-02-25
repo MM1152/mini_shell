@@ -19,20 +19,25 @@
 struct Packet {
     short packetId;
     short sender = 0;
+    bool turnFlag;
+    bool changeTurn;
     char buffer[BUFFER_SIZE];
 };
 
 class Socket {
     protected:
         std::atomic<bool> stopFlag { false };
-    
+
+        Packet sendPack;
+        Packet recvPack;
+
         int sock;
         sockaddr_in* socketAddress;
     public:
         Socket() = default;
         virtual ~Socket();
 
-        void Send(std::queue<Packet>* messageQueue, bool* flag);
+        virtual void Send(std::queue<Packet>* messageQueue, bool* flag, std::vector<std::vector<int>>& board);
         void Receive(std::queue<Packet>* messageQueue, bool* flag);
 };
 #endif // SOCKET_H

@@ -21,6 +21,7 @@ private:
 public:
     Client(int port);
     ~Client();
+    void Send(std::queue<Packet>* messageQueue, bool* flag, std::vector<std::vector<int>>& board) override;
     void Connected(std::promise<int> p);
 };
 

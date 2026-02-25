@@ -42,14 +42,18 @@ public:
         std::vector<std::string> temp;
         while(str.size() > pointer) {
             if(str[pointer] == splitword) {
-                temp.push_back(str.substr(prevPointer, pointer));
-                prevPointer = pointer;
+                temp.push_back(str.substr(prevPointer, pointer - prevPointer));
+                std::cout << str.substr(prevPointer, pointer - prevPointer) << std::endl;
+                prevPointer = pointer + 1;
             }
             pointer++;
         }
 
         if(prevPointer != pointer) {
-            temp.push_back(str.substr(prevPointer, pointer));
+            if(str.substr(prevPointer, pointer- prevPointer).size() != 0 && str.substr(prevPointer, pointer- prevPointer) != " ") {
+                temp.push_back(str.substr(prevPointer, pointer - prevPointer));
+                std::cout << str.substr(prevPointer, pointer - prevPointer) << std::endl;
+            }
         }
 
         return temp;

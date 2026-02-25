@@ -26,6 +26,11 @@ Client::~Client()
     close(sock);
 }
 
+void Client::Send(std::queue<Packet> *messageQueue, bool *flag, std::vector<std::vector<int>>& board)
+{
+    sendPack.turnFlag = false;
+    Socket::Send(messageQueue, flag, board);
+}
 
 void Client::Connected(std::promise<int> p)
 {

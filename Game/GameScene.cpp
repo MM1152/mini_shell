@@ -9,28 +9,30 @@ void GameScene::InitClient(Client *client)
 {
     this->client = client;
 
-    sendThread = std::thread(&Client::Send, this->client, &messageQueue, &sendFlag);
+    sendThread = std::thread(&Client::Send, this->client, &messageQueue, &sendFlag, std::ref(backgroundBoard));
     recvThread = std::thread(&Client::Receive, this->client, &messageQueue, &recvFlag);
+
+    turnFlag = false;
 }
 
 void GameScene::InitServer(Server *server)
 {
     this->server = server;
 
-    sendThread = std::thread(&Server::Send, this->server, &messageQueue, &sendFlag);
+    sendThread = std::thread(&Server::Send, this->server, &messageQueue, &sendFlag, std::ref(backgroundBoard));
     recvThread = std::thread(&Server::Receive, this->server, &messageQueue, &recvFlag);
+    
+    turnFlag = true;
 }
 
 void GameScene::DrawMap()
 {
-    std::vector<std::string> chat;
-    int prevQueueSize = chat.size() - 1;
+    int prevQueueSize = messageQueue.size() - 1;
+    bool first = true;
     while(1) {
-        if(!messageQueue.empty())
-            HandleMessageQueue(chat);
+        if(!messageQueue.empty() || first) {
+            HandleMessageQueue();
 
-        if(chat.size() != prevQueueSize) {
-            prevQueueSize = chat.size();
             struct winsize ws = Utils::GetTerminalSize();
             int space = ws.ws_row - board.size() - 2;
 
@@ -46,11 +48,11 @@ void GameScene::DrawMap()
                 std::cout << std::endl;
             }
 
-            std::cout << ">>>>>>>>> 착수 방법 예시 ) A 10  <<<<<<<<<<" << std::endl;
+            std::cout << " 착수 방법 예시 ) A 10 " << (turnFlag ? "( 내 차례 )" :"( 상대 차례 )") << std::endl;
             if(chat.size() >= space - 1) {
                 chat.erase(chat.begin());
             }
-
+            first = false;
         }
 
         if(recvFlag && sendFlag) {
@@ -69,28 +71,36 @@ void GameScene::DrawBoard()
     }
 }
 
-void GameScene::HandleMessageQueue(std::vector<std::string>& chat)
+void GameScene::HandleMessageQueue()
 {
     while(!messageQueue.empty()) {
         Packet packet = messageQueue.front();
-        messageQueue.pop();
         
-        if(packet.packetId == 1001) {
+        if(packet.packetId == 1001 && packet.turnFlag) {
             std::vector<std::string> split = Utils::SplitString(packet.buffer, ' ');
             char placeX = split[0][0];
             int placeY = std::stoi(split[1]);
 
-            chat.push_back(std::string(packet.sender == 0 ? "[ 내가 착수한 위치 ] [ " : "[ 상대방이 착수한 위치 ] : [ ") + placeX + ", " + std::to_string(placeY) + " ]");
-            PlaceStone(placeX - 'A', placeY, packet.sender);
+            if(PlaceStone(placeX - 'A', placeY, packet.sender) != -1){
+                chat.push_back(std::string(packet.sender == 0 ? "[ 내가 착수한 위치 ] [ " : "[ 상대방이 착수한 위치 ] : [ ") + placeX + ", " + std::to_string(placeY) + " ]");
+                if(packet.sender == 1 && packet.changeTurn && !turnFlag) turnFlag = true;
+                else if(packet.sender == 0 && packet.changeTurn && turnFlag) turnFlag = false;
+            }
         }
-        else {
+        else if(packet.packetId == 1002){
             chat.push_back(std::string(packet.sender == 0 ? "[ 내가 보낸 메세지 ] : " : "[ 상대방 ] : ") + packet.buffer);
         }
+        
+        messageQueue.pop();
     }
 }
 
-void GameScene::PlaceStone(int x, int y, int sender)
+int GameScene::PlaceStone(int x, int y, int sender)
 {
+    if(backgroundBoard[y][x] != 0 && sender == 0) chat.push_back("[ 이미 돌이 놔있는 지역입니다. ]");
+    if(backgroundBoard[y][x] != 0) return -1;
+
     backgroundBoard[y][x] = sender + 1;
     board[INIT_POSY + y][INIT_POSX + (x * 3)] = sender == 0 ? 'O' : 'X';
+    return 1;
 }

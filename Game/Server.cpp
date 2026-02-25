@@ -67,6 +67,12 @@ void Server::Open(std::promise<int>* p)
 
 }
 
+void Server::Send(std::queue<Packet> *messageQueue, bool *flag, std::vector<std::vector<int>>& board)
+{
+    sendPack.turnFlag = true;
+    Socket::Send(messageQueue, flag, board);
+}
+
 Server::Server(int port)
 {
     this->port = port;
