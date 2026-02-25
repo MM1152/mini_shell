@@ -36,6 +36,7 @@ public:
     }
 
     static std::vector<std::string> SplitString(std::string str,const char splitword){
+
         int pointer = 0;
         int prevPointer = 0;
         std::vector<std::string> temp;

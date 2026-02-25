@@ -46,7 +46,7 @@ void GameScene::DrawMap()
                 std::cout << std::endl;
             }
 
-            std::cout << ">>>>>>>>> 착수 방법 예시 ) A 10  <<<<<<<<<" << std::endl;
+            std::cout << ">>>>>>>>> 착수 방법 예시 ) A 10  <<<<<<<<<<" << std::endl;
             if(chat.size() >= space - 1) {
                 chat.erase(chat.begin());
             }
@@ -65,7 +65,7 @@ void GameScene::DrawMap()
 void GameScene::DrawBoard()
 {
     for(int i = 0 ; i < board.size(); i++){
-        std::cout << board[i] << std::endl;
+        std::wcout << board[i] << std::endl;
     }
 }
 
@@ -79,10 +79,18 @@ void GameScene::HandleMessageQueue(std::vector<std::string>& chat)
             std::vector<std::string> split = Utils::SplitString(packet.buffer, ' ');
             char placeX = split[0][0];
             int placeY = std::stoi(split[1]);
-            chat.push_back(std::string(packet.sender == 0 ? "[ 내가 착수한 위치 ] { " : "[ 상대방이 착수한 위치 ] : [ ") + placeX + ", " + std::to_string(placeY) + " ]");
+
+            chat.push_back(std::string(packet.sender == 0 ? "[ 내가 착수한 위치 ] [ " : "[ 상대방이 착수한 위치 ] : [ ") + placeX + ", " + std::to_string(placeY) + " ]");
+            PlaceStone(placeX - 'A', placeY, packet.sender);
         }
         else {
             chat.push_back(std::string(packet.sender == 0 ? "[ 내가 보낸 메세지 ] : " : "[ 상대방 ] : ") + packet.buffer);
         }
     }
+}
+
+void GameScene::PlaceStone(int x, int y, int sender)
+{
+    backgroundBoard[y][x] = sender + 1;
+    board[INIT_POSY + y][INIT_POSX + (x * 3)] = sender == 0 ? 'O' : 'X';
 }
