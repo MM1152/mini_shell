@@ -26,14 +26,14 @@ struct Packet {
 
 class Socket {
     protected:
-        std::atomic<bool> stopFlag { false };
-
-        Packet sendPack;
-        Packet recvPack;
-
-        int sock;
-        sockaddr_in* socketAddress;
+    
+    Packet sendPack;
+    Packet recvPack;
+    
+    int sock;
+    sockaddr_in* socketAddress;
     public:
+        std::atomic<bool> stopFlag { false };
         Socket() = default;
         virtual ~Socket();
 

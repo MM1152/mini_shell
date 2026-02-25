@@ -49,7 +49,7 @@ void Socket::Send(std::queue<Packet>* messageQueue, bool* flag, std::vector<std:
                     break;
                 }
 
-                bool changeTurn = sendPack.turnFlag && sendPack.packetId == 1001 && board[std::stoi(split[1])][split[0][0] - 'A'] == 0;
+                bool changeTurn = sendPack.turnFlag && sendPack.packetId == 1001 && board[std::stoi(split[1]) - 1][split[0][0] - 'A'] == 0;
                 sendPack.changeTurn = changeTurn;
 
                 if(send(sock, &sendPack, MSG_SIZE, 0) <= 0) {

@@ -10,15 +10,16 @@
 #include "Client.h"
 #include "Socket.h"
 #include <vector>
+#include <utility>
 #include "MainGame.h"
-
 #define INIT_POSX 4
 #define INIT_POSY 1
 
 //○ ●
 
-class GameScene {
+class  GameScene {
 private:
+    std::vector<std::pair<int, int>> direction = { {1,0}, {1,1}, {0,1}, {-1,1}, {-1,0}, {-1,-1}, {0,-1}, {1,-1} };
     std::vector<std::vector<int>> backgroundBoard {
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -68,7 +69,8 @@ private:
     bool sendFlag;
     bool recvFlag;
     bool turnFlag;
-
+    int winner = -1;
+    int CheckBoard(int x, int y, int sender, std::pair<int, int> dir);
     void SettingClient();
 public:
     void InitClient(Client* client);
@@ -77,6 +79,7 @@ public:
     void DrawMap();
     void DrawBoard();
     void HandleMessageQueue();
+    int CheckWin(int x, int y, int sender);
     int PlaceStone(int x, int y, int sender);
 };
 

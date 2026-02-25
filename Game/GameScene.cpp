@@ -1,5 +1,27 @@
 #include "GameScene.h"
 
+int GameScene::CheckBoard(int x, int y, int sender, std::pair<int, int> dir)
+{
+    int count = 0;
+    
+    while(true) {
+        x = x + dir.second;
+        y = y + dir.first;
+
+        if(x < 0 || y < 0 || x >= backgroundBoard.size() || y >= backgroundBoard.size()) {
+            break;
+        }
+
+        if(backgroundBoard[y][x] !=  sender + 1) {
+            break;
+        }
+
+        count++;
+    }
+
+    return count;
+}
+
 void GameScene::SettingClient()
 {
         
@@ -54,7 +76,13 @@ void GameScene::DrawMap()
             }
             first = false;
         }
-
+        if(winner != -1) {
+            std::cout << "승자 정해짐" << std::endl;
+            recvFlag = true;
+            sendFlag = true;
+            server->stopFlag = true;
+            client->stopFlag = true;
+        }
         if(recvFlag && sendFlag) {
             std::cout << "GameScene Loop Finish" << std::endl;
             break;
@@ -95,12 +123,32 @@ void GameScene::HandleMessageQueue()
     }
 }
 
+int GameScene::CheckWin(int x, int y, int sender)
+{
+    int count = 0;
+    for(int i = 0; i < 4; i++) {
+        count += CheckBoard(x, y, sender, direction[i]);
+        count += CheckBoard(x, y, sender, direction[i + 4]);
+        count += 1;
+        if(count >= 5) {
+            return 1;
+        }
+        count = 0;
+    }
+    return -1;
+}
+
 int GameScene::PlaceStone(int x, int y, int sender)
 {
-    if(backgroundBoard[y][x] != 0 && sender == 0) chat.push_back("[ 이미 돌이 놔있는 지역입니다. ]");
-    if(backgroundBoard[y][x] != 0) return -1;
+    if(backgroundBoard[y - 1][x] != 0 && sender == 0) chat.push_back("[ 이미 돌이 놔있는 지역입니다. ]");
+    if(backgroundBoard[y - 1][x] != 0) return -1;
 
-    backgroundBoard[y][x] = sender + 1;
-    board[INIT_POSY + y][INIT_POSX + (x * 3)] = sender == 0 ? 'O' : 'X';
+    backgroundBoard[y - 1][x] = sender + 1;
+    board[INIT_POSY + y][INIT_POSX + x * 3] = sender == 0 ? 'O' : 'X';
+
+    if(CheckWin(x, y - 1, sender) == 1) {
+        winner = sender;
+        return 1;
+    }
     return 1;
 }

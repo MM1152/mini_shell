@@ -23,6 +23,9 @@ Client::Client(int port)
 
 Client::~Client()
 {
+    stopFlag = true;
+    int opt = 1;
+    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     close(sock);
 }
 
